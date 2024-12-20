@@ -2,37 +2,40 @@
 
 # Path to your README.md file
 README_FILE="README.md"
-TEMP_FILE=$(mktemp)
 
-# Get the latest commit message
-COMMIT_MSG=$(git log -1 --pretty=%B)
-COMMIT_DATE=$(git log -1 --pretty=%ad --date=short)
-COMMIT_HASH=$(git log -1 --pretty=%h)
+# Skip if README.md doesn't exist
+[ ! -f "$README_FILE" ] && exit 0
 
-# Find the Changelog section in README.md
-CHANGELOG_START=$(grep -n "^## Changelog" "$README_FILE" | cut -d: -f1)
+# Get the latest commit info (do this once)
+COMMIT_INFO=$(git log -1 --pretty=format:"%ad|%h|%B" --date=short)
+IFS='|' read -r COMMIT_DATE COMMIT_HASH COMMIT_MSG <<< "$COMMIT_INFO"
 
-if [ -z "$CHANGELOG_START" ]; then
-    # If no Changelog section exists, create it before ## Support
-    SUPPORT_LINE=$(grep -n "^## Support" "$README_FILE" | cut -d: -f1)
+# Skip if no changes to add
+grep -q "^\- ${COMMIT_DATE} \[\`${COMMIT_HASH}\`\]" "$README_FILE" && exit 0
+
+# Use a single awk command to do all modifications
+awk -v date="$COMMIT_DATE" -v hash="$COMMIT_HASH" -v msg="$COMMIT_MSG" '
+    # Add Changelog section if it doesn't exist
+    /^## Support/ && !found_changelog {
+        print "\n## Changelog\n\n### Unreleased\n"
+        found_changelog = 1
+    }
     
-    # Add Changelog section before Support
-    sed "${SUPPORT_LINE}i\\\n## Changelog\n\n### Unreleased\n" "$README_FILE" > "$TEMP_FILE"
-    mv "$TEMP_FILE" "$README_FILE"
+    # Add new entry under Unreleased
+    /^### Unreleased/ {
+        print $0
+        print "- " date " [`" hash "`](../../commit/" hash "): " msg
+        next
+    }
     
-    # Get the new Changelog position
-    CHANGELOG_START=$(grep -n "^## Changelog" "$README_FILE" | cut -d: -f1)
+    # Print all other lines unchanged
+    { print }
+' "$README_FILE" > "$README_FILE.tmp" && mv "$README_FILE.tmp" "$README_FILE"
+
+# Stage and amend only if changes were made
+if git diff --quiet "$README_FILE"; then
+    exit 0
+else
+    git add "$README_FILE"
+    git commit --amend --no-edit
 fi
-
-# Add the new commit under Unreleased
-NEXT_LINE=$((CHANGELOG_START + 3))
-sed "${NEXT_LINE}i\- ${COMMIT_DATE} [\`${COMMIT_HASH}\`](../../commit/${COMMIT_HASH}): ${COMMIT_MSG}" "$README_FILE" > "$TEMP_FILE"
-
-# Move the temporary file back
-mv "$TEMP_FILE" "$README_FILE"
-
-# Stage the README.md changes
-git add "$README_FILE"
-
-# Amend the commit to include the README changes
-git commit --amend --no-edit 
