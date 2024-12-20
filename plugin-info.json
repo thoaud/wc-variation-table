@@ -6,8 +6,8 @@
     "requires": "5.8",
     "author": "Thomas Audunhus",
     "author_profile": "https://audunhus.com",
-    "download_url": "https://github.com/audunhus/wc-variation-table/releases/download/1.0.0/wc-variation-table.zip",
-    "homepage": "https://github.com/audunhus/wc-variation-table",
+    "download_url": "https://github.com/thoaud/wc-variation-table/releases/download/1.0.1/wc-variation-table.zip",
+    "homepage": "https://github.com/thoaud/wc-variation-table",
     "donate_link": "",
     "requires_php": "7.4",
     "last_updated": "2023-12-20 12:00:00",
@@ -16,8 +16,5 @@
         "installation": "1. Upload the plugin files to the `/wp-content/plugins/wc-variation-table` directory, or install the plugin through the WordPress plugins screen directly.\n2. Activate the plugin through the 'Plugins' screen in WordPress.\n3. Use the WooCommerce > Settings > Products > Variation Table screen to configure the plugin.",
         "changelog": "= 1.0.0 =\n* Initial release"
     },
-    "banners": {
-        "low": "https://raw.githubusercontent.com/audunhus/wc-variation-table/main/assets/banner-772x250.jpg",
-        "high": "https://raw.githubusercontent.com/audunhus/wc-variation-table/main/assets/banner-1544x500.jpg"
-    }
+    "banners": {}
 } 

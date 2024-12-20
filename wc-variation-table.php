@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Variation Table
  * Plugin URI: https://audunhus.com
  * Description: Adds a customizable table view of product variations for WooCommerce variable products, with sorting and filtering capabilities
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Thomas Audunhus
  * Author URI: https://audunhus.com
  * Text Domain: wc-variation-table
