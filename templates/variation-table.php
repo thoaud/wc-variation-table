@@ -1,6 +1,22 @@
 <?php
 /**
  * Template for displaying the variation table
+ *
+ * This template handles the HTML output of the variation table, including:
+ * - Column management and ordering
+ * - Attribute display (separate or combined)
+ * - Preview functionality
+ * - Table headers and sorting
+ * - Individual variation rows with dynamic data
+ *
+ * @package WC_Variation_Table
+ * @subpackage Templates
+ * @since 1.0.0
+ *
+ * @global WC_Product_Variable $product The current product object
+ * @var array $variations Array of available product variations
+ * @var array $attributes Array of product attributes
+ * @var array $columns Configuration array for table columns
  */
 
 if (!defined('ABSPATH')) {

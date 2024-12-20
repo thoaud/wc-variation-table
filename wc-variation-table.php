@@ -1,5 +1,18 @@
 <?php
 /**
+ * WooCommerce Variation Table
+ *
+ * This plugin adds a customizable table view of product variations for WooCommerce
+ * variable products. It provides sorting and filtering capabilities, making it easier
+ * for customers to compare and select product variations.
+ *
+ * @package     WC_Variation_Table
+ * @author      Thomas Audunhus
+ * @copyright   2023 Thomas Audunhus
+ * @license     GPL-3.0+
+ * @link        https://audunhus.com
+ *
+ * @wordpress-plugin
  * Plugin Name: WooCommerce Variation Table
  * Plugin URI: https://audunhus.com
  * Description: Adds a customizable table view of product variations for WooCommerce variable products, with sorting and filtering capabilities
@@ -7,12 +20,17 @@
  * Author: Thomas Audunhus
  * Author URI: https://audunhus.com
  * Text Domain: wc-variation-table
+ * Domain Path: /languages
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * WC requires at least: 5.0
+ *
+ * GitHub Plugin URI: https://github.com/thoaud/wc-variation-table
+ * Primary Branch: main
+ * Release Asset: true
  */
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
@@ -40,6 +58,8 @@ class WC_Variation_Table {
             new WC_Variation_Table\Updater();
             new WC_Variation_Table\Settings();
         }
+
+        register_deactivation_hook( __FILE__, 'wc_variation_table_deactivate' );
     }
 
     /**
@@ -646,6 +666,22 @@ class WC_Variation_Table {
         }
         return $sizes;
     }
+}
+
+/**
+ * Clean up temporary data on plugin deactivation
+ *
+ * @return void
+ */
+function wc_variation_table_deactivate() {
+    // Clear any transients
+    delete_transient( 'wc_variation_table_updating' );
+    
+    // Clear scheduled events
+    wp_clear_scheduled_hook( 'wc_variation_table_cleanup' );
+    
+    // Optionally flush rewrite rules
+    flush_rewrite_rules();
 }
 
 // Initialize the plugin

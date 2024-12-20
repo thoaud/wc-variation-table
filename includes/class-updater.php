@@ -1,6 +1,20 @@
 <?php
 /**
  * Plugin updater class
+ *
+ * Handles automatic updates for the plugin using GitHub releases.
+ * This class implements a custom update checker that bypasses the WordPress.org
+ * plugin repository and instead checks for updates directly from a GitHub repository.
+ *
+ * Features:
+ * - Checks for updates via GitHub's plugin-info.json
+ * - Caches update checks for 24 hours
+ * - Handles SSL verification differently in development
+ * - Integrates with WordPress's native update system
+ *
+ * @package WC_Variation_Table
+ * @subpackage Updates
+ * @since 1.0.0
  */
 
 namespace WC_Variation_Table;

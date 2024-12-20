@@ -1,3 +1,13 @@
+/**
+ * Gutenberg Block Registration for Variation Table
+ *
+ * Registers a custom Gutenberg block that displays the variation table
+ * in the block editor and renders it dynamically on the frontend.
+ *
+ * @package WC_Variation_Table
+ * @subpackage Blocks
+ * @since 1.0.0
+ */
 const { registerBlockType } = wp.blocks;
 const { __ } = wp.i18n;
 const { useBlockProps } = wp.blockEditor;

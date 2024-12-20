@@ -1,17 +1,40 @@
 <?php
 /**
- * Custom settings fields for WC Variation Table
+ * WooCommerce Variation Table Settings
+ *
+ * Handles the plugin's settings page, including column management and custom fields.
+ * This class is responsible for rendering the settings interface and handling
+ * the saving and retrieval of plugin settings.
+ *
+ * @package WC_Variation_Table
+ * @subpackage Settings
  */
 
 namespace WC_Variation_Table;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+/**
+ * Settings Class
+ *
+ * Manages all plugin settings, including:
+ * - Column management (ordering, visibility, custom columns)
+ * - Custom fields configuration
+ * - Display settings
+ * - Table placement options
+ *
+ * @since 1.0.0
+ */
 class Settings {
     /**
-     * Initialize the settings
+     * Initialize the settings class
+     *
+     * Sets up all necessary hooks and filters for the settings page
+     * functionality, including asset enqueueing and field rendering.
+     *
+     * @since 1.0.0
      */
     public function __construct() {
         add_action('woocommerce_admin_field_column_manager', array($this, 'output_column_manager'));
@@ -21,10 +44,21 @@ class Settings {
         // Add filters to handle serialization
         add_filter('pre_update_option_wcvt_columns', array($this, 'maybe_serialize_columns'), 10, 2);
         add_filter('option_wcvt_columns', array($this, 'maybe_unserialize_columns'));
+
+        // Add this to your settings class
+        add_action( 'admin_init', array( $this, 'add_uninstall_notice' ) );
     }
 
     /**
-     * Maybe serialize columns before saving
+     * Serialize column data before saving to database
+     *
+     * Ensures column data is properly structured and serialized
+     * before being saved as a WordPress option.
+     *
+     * @since 1.0.0
+     * @param mixed $value     The value to be saved
+     * @param mixed $old_value The current value in the database
+     * @return mixed The processed value to be saved
      */
     public function maybe_serialize_columns($value, $old_value) {
         if (is_array($value)) {
@@ -249,5 +283,31 @@ class Settings {
         }
 
         return $fields;
+    }
+
+    /**
+     * Add uninstall notice to settings page
+     *
+     * @return void
+     */
+    public function add_uninstall_notice() {
+        add_settings_field(
+            'wc_variation_table_uninstall_notice',
+            __( 'Plugin Deletion', 'wc-variation-table' ),
+            array( $this, 'render_uninstall_notice' ),
+            'wc_variation_table_settings',
+            'wc_variation_table_general_section'
+        );
+    }
+
+    /**
+     * Render uninstall notice
+     *
+     * @return void
+     */
+    public function render_uninstall_notice() {
+        echo '<p class="description">';
+        esc_html_e( 'When this plugin is deleted through the WordPress Plugins page, all its data will be permanently removed from your database.', 'wc-variation-table' );
+        echo '</p>';
     }
 } 
